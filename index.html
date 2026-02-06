@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mga Posa</title>
+<style>
+    * { padding:0; margin:0; box-sizing:border-box; font-family:monospace; }
+    body { display:flex; justify-content:center; align-items:center; min-height:100vh; padding:3rem; position:relative; flex-direction:column; }
+    .text-section { font-size:3rem; text-align:center; max-width:500px; width:100%; position:relative; }
+    button { padding:1rem 2rem; font-size:1.5rem; border-radius:10px; cursor:pointer; transition:all 0.2s ease; position:relative; }
+    button:hover { background-color: rgb(119, 153, 119); }
+    img { display:block; margin:1.5rem auto; width:300px; opacity:0; transition: opacity 0.3s ease; }
+    input { display:block; margin:1.5rem auto; font-size:1.5rem; text-align:center; width:100px; display:none; }
+    .button-group { display:flex; justify-content:space-around; margin-top:2rem; position:relative; }
+
+    /* Cards CSS */
+    .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 1rem; }
+    .card {
+        background-color: #f8c8dc;
+        padding: 1.5rem;
+        border-radius: 15px;
+        cursor: pointer;
+        width: 140px;
+        font-size: 1.1rem;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        text-align: center;
+    }
+    .card:hover { transform: translateY(-5px); background-color: #f080a0; }
+
+</style>
+</head>
+<body>
+
+<section class="text-section">
+    <p id="name">Hi, mahaaallllll</p>
+    <p id="change_text">I have a simple game for youuuu</p>
+    <button id="mainBtn">Continueee</button>
+
+    <!-- Final Cards Container (Hidden Initially) -->
+    <div id="finalCards" style="display:none; margin-top:2rem;">
+        <h2>Pili ikawwww</h2>
+        <div class="card-container">
+            <div class="card" data-link="https://maps.app.goo.gl/GKAH6FBDNVeNwkES8">In(sight) coffee (10-11pm)</div>
+            <div class="card" data-link="https://maps.app.goo.gl/QcgpJx7RBo6hMwu3A">Offsite coffee (retro vibe, 1pm-1am)</div>
+            <div class="card" data-link="https://maps.app.goo.gl/eEKUDj8a4RtD1YwS7">Otto museum (Sat only, 10am)</div>
+            <div class="card" data-link="https://maps.app.goo.gl/XRVNG18cPHZffEJq6">Neolivbrews (w/photobooth, 1pm-1am)</div>
+            <div class="card" id="messengerCard">Plan togetherrr???</div>
+        </div>
+        <p id="finalMessage" style="margin-top:1rem; font-size:1.5rem; color:#333;"></p>
+    </div>
+
+</section>
+
+<script>
+const section = document.querySelector(".text-section");
+const cat_images = ["dit/2.jpg", "dit/3.jpg", "dit/4.jpg"];
+const correct_answers = [2,3,4];
+const change = document.getElementById("change_text");
+const name = document.getElementById("name");
+const btn = document.getElementById("mainBtn");
+
+let currentIndex = 0;
+let img = null;
+let input = null;
+
+// Preload images
+const preloadedImages = [];
+cat_images.forEach(src => { const i = new Image(); i.src = src; preloadedImages.push(i); });
+
+btn.addEventListener("click", firstStep);
+
+function firstStep() {
+    change.textContent = "I want you to count the total number of cats that appears on screen, okiii???";
+    name.style.display = "none";
+
+    if (!img) {
+        img = document.createElement("img");
+        img.style.opacity = 0;
+        img.style.display = "block"; 
+        section.insertBefore(img, btn);
+
+        input = document.createElement("input");
+        input.type = "number";
+        input.id = "cat_count";
+        input.style.display = "none"; 
+        section.insertBefore(input, btn);
+    }
+
+    btn.textContent = "Next";
+    btn.removeEventListener("click", firstStep);
+    btn.addEventListener("click", checkAnswer);
+}
+
+function checkAnswer() {
+    if (img.src === "" || img.src == window.location.href) { 
+        img.src = preloadedImages[currentIndex].src;
+        img.style.opacity = 0;
+        setTimeout(() => img.style.opacity = 1, 10);
+        input.style.display = "block";
+        input.value = "";
+        return; 
+    }
+
+    const userAnswer = parseInt(input.value);
+
+    if (userAnswer === correct_answers[currentIndex]) {
+        currentIndex++;
+        input.value = "";
+
+        if(currentIndex < cat_images.length){
+            img.src = preloadedImages[currentIndex].src;
+            img.style.opacity = 0;
+            setTimeout(() => img.style.opacity = 1, 10);
+        } else {
+            input.style.display = "none"; 
+            img.style.display = "none";
+            change.textContent = "Binilang mo ba nang maayosss??? HAHHAHAHAHAHAH";
+            btn.textContent = "Go Back";
+
+            btn.removeEventListener("click", checkAnswer);
+            btn.addEventListener("click", showValentineStep);
+        } 
+
+    } else {
+        alert("mali, mahalll shshshsh");
+    }
+}
+
+// Valentine step
+let noClickCount = 0;
+function showValentineStep() {
+    change.textContent = "Would you like to go out with me this valentineee???";
+
+    img.style.display = "block";
+    img.src = "dit/divel.jpg";
+    img.style.opacity = 0;
+    setTimeout(() => img.style.opacity = 1, 10);
+
+    const buttonGroup = document.createElement("div");
+    buttonGroup.className = "button-group";
+
+    // No button
+    const noBtn = document.createElement("button");
+    noBtn.textContent = "No";
+    noBtn.style.padding = "0.5rem 1rem";
+    noBtn.style.fontSize = "1rem";
+    noBtn.onclick = () => {
+        noClickCount++;
+        if(noClickCount === 1){
+            alert("Mali yung button na napindot moooo");
+        }else if(noClickCount === 2){
+            alert("okayyy??????");
+        }else if(noClickCount === 3){
+            alert("????????????");
+        }else if(noClickCount === 4){
+            alert("MAHAAAALLLLL!!!!!!");
+        }else if(noClickCount === 5){
+            alert("bahala ka na nga dyannnn");
+        }else {
+            const maxX = section.clientWidth - noBtn.offsetWidth;
+            const maxY = window.innerHeight - noBtn.offsetHeight - 50;
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+            noBtn.style.position = "absolute";
+            noBtn.style.left = randomX + "px";
+            noBtn.style.top = randomY + "px";
+        }
+    };
+
+    // Yes button
+    const yesBtn = document.createElement("button");
+    yesBtn.textContent = "Yes";
+    yesBtn.style.padding = "1.5rem 2.5rem";
+    yesBtn.style.fontSize = "2rem";
+    yesBtn.onclick = () => {
+        change.textContent = "Yayyyy!!!! Thank youuuuu";
+        buttonGroup.style.display = "none";
+        img.style.display = "none";
+
+        // Show final cards
+        const finalCards = document.getElementById("finalCards");
+        finalCards.style.display = "block";
+
+        const cards = finalCards.querySelectorAll(".card");
+        const finalMessage = document.getElementById("finalMessage");
+
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                if(card.id === "messengerCard"){
+                    finalMessage.textContent = "Chat mo q sa Messenger if you have other plan heheheh";
+                } else {
+                    window.open(card.dataset.link, "_blank");
+                }
+            });
+        });
+    };
+
+    buttonGroup.appendChild(noBtn);
+    buttonGroup.appendChild(yesBtn);
+    section.appendChild(buttonGroup);
+
+    btn.style.display = "none";
+}
+</script>
+
+</body>
+</html>
